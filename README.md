@@ -24,3 +24,10 @@
 1. 打开 Clash Verge
 2. 进入 **主题 / 外观 / 自定义 CSS**（入口名称可能略有不同）
 3. 将本仓库提供的 CSS **完整复制粘贴**进去并保存/启用即可
+# 预览
+## 浅色
+<img width="1006" height="681" alt="2" src="https://github.com/user-attachments/assets/39560c14-b25d-4d8e-bf16-1eed6783d563" />
+
+## 深色
+<img width="995" height="677" alt="1" src="https://github.com/user-attachments/assets/2c7c9aa1-27df-43ab-8a10-27483385838f" />
+
