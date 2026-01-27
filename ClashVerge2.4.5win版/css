@@ -1,13 +1,12 @@
 /* =========================================================
-   Clash Verge - Windows Only Premium (WIN v1.5)
-   重点：不依赖 .css-xxxx / 不依赖 .MuiDrawer-paper
-   - Sidebar：用 .layout__left
-   - 节点卡片：用 :has(.MuiChip-root) 识别（Trojan/UDP 那些标签）
-   - 选中态：无竖条，整块蓝
+   Clash Verge Theme - Windows ONLY (WIN v1.7)
+   目标：Win 上也有高级层次（不依赖 blur / 不依赖 MuiDrawer）
+   关键：多路命中“卡片容器”，避免结构差异导致不生效
    ========================================================= */
 
 :root{
   --accent: rgba(10,132,255,1);
+
   --r: 18px;
   --rs: 14px;
 
@@ -21,8 +20,10 @@
     radial-gradient(900px 700px at 78% 16%, rgba(150, 120, 255, 0.16), transparent 70%),
     linear-gradient(180deg, rgba(8, 10, 14, 0.995), rgba(12, 18, 26, 0.99));
 
+  /* Win 更“实”的面板（高级磨砂，不靠玻璃） */
   --panelL1: rgba(255,255,255,0.92);
   --panelL2: rgba(248,250,252,0.82);
+
   --panelD1: rgba(22,26,34,0.92);
   --panelD2: rgba(16,20,28,0.82);
 
@@ -46,7 +47,7 @@
              0 16px 34px rgba(10,132,255,0.12);
 }
 
-/* 背景直接铺到 html（最稳） */
+/* ========== 背景（直接铺 html，最稳） ========== */
 html, body{
   margin: 0 !important;
   background: transparent !important;
@@ -58,7 +59,7 @@ html{ background: var(--bgL) !important; }
   body{ color: var(--txD) !important; }
 }
 
-/* 让 app 容器透明，露出背景 */
+/* 让应用容器透明露底 */
 section,
 #root,
 .base-container,
@@ -68,7 +69,14 @@ section,
   background: transparent !important;
 }
 
-/* 侧边栏（不依赖 MuiDrawer） */
+/* 字体更细腻 */
+*{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.1px;
+}
+
+/* ========== 侧边栏（不依赖 MuiDrawer） ========== */
 .layout__left{
   background: rgba(255,255,255,0.18) !important;
   border-right: 1px solid rgba(0,0,0,0.10) !important;
@@ -80,7 +88,7 @@ section,
   }
 }
 
-/* 左侧菜单：单列 + 贴底 */
+/* 左侧菜单单列 + 贴底 */
 .the-menu{
   display:flex !important;
   flex-direction:column !important;
@@ -103,61 +111,159 @@ section,
   padding-top:14px !important;
 }
 
-/* ========== 关键：节点卡片命中（Win UI 类名不同，用 “包含 chip” 来识别） ==========
-   Trojan/UDP/Selector 这些标签基本都是 MuiChip-root。
-   只要卡片里有 chip，我们就给它高级卡片材质。 */
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root){
+/* 左侧选中（更柔和、更高级） */
+.layout__left .Mui-selected,
+.layout__left [aria-selected="true"]{
+  border-radius: var(--rs) !important;
+  background: linear-gradient(180deg, rgba(10,132,255,0.22), rgba(10,132,255,0.14)) !important;
+  border: 1px solid rgba(10,132,255,0.26) !important;
+  box-shadow: 0 10px 22px rgba(10,132,255,0.14) !important;
+}
+
+/* ========== 主内容区卡片：多路命中（Win 结构差异兜底） ========== */
+/* A) 如果有 MUI Paper/Accordion：直接命中 */
+.base-container :not(.layout__left) .MuiPaper-root,
+.base-container :not(.layout__left) .MuiAccordion-root{
   border-radius: var(--r) !important;
-  border: 1px solid var(--bdL) !important;
-  background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
-  box-shadow: var(--inL), var(--shL) !important;
   overflow: hidden !important;
 }
+
+@media (prefers-color-scheme: light){
+  .base-container :not(.layout__left) .MuiPaper-root,
+  .base-container :not(.layout__left) .MuiAccordion-root{
+    background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
+    border: 1px solid var(--bdL) !important;
+    box-shadow: var(--inL), var(--shL) !important;
+  }
+}
 @media (prefers-color-scheme: dark){
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root){
-    border: 1px solid var(--bdD) !important;
+  .base-container :not(.layout__left) .MuiPaper-root,
+  .base-container :not(.layout__left) .MuiAccordion-root{
     background: linear-gradient(180deg, var(--panelD1), var(--panelD2)) !important;
+    border: 1px solid var(--bdD) !important;
     box-shadow: var(--inD), var(--shD) !important;
   }
 }
 
-/* hover 微浮起（更高级） */
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root):hover{
+/* B) 兜底：命中“可交互条目/卡片容器”
+   - 很多节点行/卡片会带 role="button" / tabindex / aria-selected
+   - 我们只在右侧内容区生效，避免污染左侧 */
+.base-container :not(.layout__left) :is(
+  div[role="button"],
+  button,
+  li[role="button"],
+  div[tabindex],
+  button[tabindex]
+){
+  border-radius: var(--r) !important;
+}
+
+/* 只给“看起来像卡片的块”上材质：
+   - 有 aria-selected / aria-checked / aria-expanded（节点/折叠/选择项常见）
+   - 或者内部包含两个以上的小标签（Chip）时也会命中 */
+.base-container :not(.layout__left) :is(
+  div[aria-selected],
+  div[aria-checked],
+  div[aria-expanded],
+  button[aria-selected],
+  button[aria-checked],
+  button[aria-expanded]
+){
+  overflow: hidden !important;
+}
+@media (prefers-color-scheme: light){
+  .base-container :not(.layout__left) :is(
+    div[aria-selected],
+    div[aria-checked],
+    div[aria-expanded],
+    button[aria-selected],
+    button[aria-checked],
+    button[aria-expanded]
+  ){
+    background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
+    border: 1px solid var(--bdL) !important;
+    box-shadow: var(--inL), var(--shL) !important;
+  }
+}
+@media (prefers-color-scheme: dark){
+  .base-container :not(.layout__left) :is(
+    div[aria-selected],
+    div[aria-checked],
+    div[aria-expanded],
+    button[aria-selected],
+    button[aria-checked],
+    button[aria-expanded]
+  ){
+    background: linear-gradient(180deg, var(--panelD1), var(--panelD2)) !important;
+    border: 1px solid var(--bdD) !important;
+    box-shadow: var(--inD), var(--shD) !important;
+  }
+}
+
+/* hover 微浮起（高级感） */
+.base-container :not(.layout__left) :is(
+  .MuiPaper-root,
+  .MuiAccordion-root,
+  div[aria-selected],
+  div[aria-checked],
+  div[aria-expanded],
+  button[aria-selected],
+  button[aria-checked],
+  button[aria-expanded]
+):hover{
   transform: translateY(-1px);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
-/* 选中态：用 aria / Mui-selected 兜底（无竖条，整块蓝） */
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root).Mui-selected,
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-selected="true"],
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-checked="true"]{
+/* ========== 选中态：整块蓝（无竖条） ========== */
+.base-container :not(.layout__left) :is(
+  .Mui-selected,
+  [aria-selected="true"],
+  [aria-checked="true"]
+){
   box-shadow: var(--selGlow) !important;
 }
 @media (prefers-color-scheme: light){
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root).Mui-selected,
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-selected="true"],
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-checked="true"]{
+  .base-container :not(.layout__left) :is(
+    .Mui-selected,
+    [aria-selected="true"],
+    [aria-checked="true"]
+  ){
     background: linear-gradient(180deg, rgba(10,132,255,0.22), rgba(10,132,255,0.14)) !important;
     border: 1px solid var(--selBdL) !important;
   }
 }
 @media (prefers-color-scheme: dark){
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root).Mui-selected,
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-selected="true"],
-  .base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)[aria-checked="true"]{
+  .base-container :not(.layout__left) :is(
+    .Mui-selected,
+    [aria-selected="true"],
+    [aria-checked="true"]
+  ){
     background: linear-gradient(180deg, rgba(10,132,255,0.30), rgba(10,132,255,0.18)) !important;
     border: 1px solid var(--selBdD) !important;
   }
 }
 
-/* 去掉你说的“竖条/闪一下”指示器 */
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)::before,
-.base-container :not(.layout__left) :is(div, button, li, a):has(.MuiChip-root)::after{
+/* 彻底干掉“竖条闪一下”类指示器伪元素 */
+.base-container :not(.layout__left) :is(
+  .Mui-selected,
+  [aria-selected="true"],
+  [aria-checked="true"],
+  button:active,
+  button:focus-visible
+)::before,
+.base-container :not(.layout__left) :is(
+  .Mui-selected,
+  [aria-selected="true"],
+  [aria-checked="true"],
+  button:active,
+  button:focus-visible
+)::after{
   content: none !important;
   display: none !important;
 }
 
-/* 标签（Trojan/UDP）做成 iOS 胶囊 */
+/* ========== 标签做 iOS 胶囊（如果 Win 上有 MuiChip 就命中） ========== */
 .MuiChip-root,
 .MuiChip-outlined,
 .MuiChip-sizeSmall{
