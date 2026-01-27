@@ -1,7 +1,9 @@
 /* =========================================================
-   Clash Verge Theme - Windows ONLY (WIN v1.7)
-   目标：Win 上也有高级层次（不依赖 blur / 不依赖 MuiDrawer）
-   关键：多路命中“卡片容器”，避免结构差异导致不生效
+   Clash Verge - Windows Only (WIN v2.0)
+   修复点：
+   1) 卡片和背景融合 -> 提高面板不透明度 + 强化阴影/边框
+   2) 避免误伤右侧窄竖条 -> 排除超窄元素
+   3) 选中态整块蓝，无竖条闪烁
    ========================================================= */
 
 :root{
@@ -10,46 +12,46 @@
   --r: 18px;
   --rs: 14px;
 
+  /* 背景压低对比（避免吃掉卡片层级） */
   --bgL:
-    radial-gradient(1200px 900px at 16% 10%, rgba(160, 205, 255, 0.60), transparent 62%),
-    radial-gradient(900px 700px at 82% 16%, rgba(235, 225, 255, 0.44), transparent 66%),
-    linear-gradient(180deg, rgba(246, 248, 252, 0.98), rgba(232, 238, 247, 0.96));
+    radial-gradient(1100px 820px at 18% 8%, rgba(160, 205, 255, 0.42), transparent 64%),
+    radial-gradient(900px 700px at 82% 16%, rgba(235, 225, 255, 0.32), transparent 68%),
+    linear-gradient(180deg, rgba(246, 248, 252, 0.99), rgba(232, 238, 247, 0.985));
 
   --bgD:
-    radial-gradient(1200px 900px at 20% 12%, rgba(25, 120, 255, 0.28), transparent 66%),
-    radial-gradient(900px 700px at 78% 16%, rgba(150, 120, 255, 0.16), transparent 70%),
-    linear-gradient(180deg, rgba(8, 10, 14, 0.995), rgba(12, 18, 26, 0.99));
+    radial-gradient(1200px 900px at 20% 12%, rgba(25, 120, 255, 0.18), transparent 68%),
+    radial-gradient(900px 700px at 78% 16%, rgba(150, 120, 255, 0.10), transparent 72%),
+    linear-gradient(180deg, rgba(8, 10, 14, 0.998), rgba(12, 18, 26, 0.996));
 
-  /* Win 更“实”的面板（高级磨砂，不靠玻璃） */
-  --panelL1: rgba(255,255,255,0.92);
-  --panelL2: rgba(248,250,252,0.82);
+  /* 面板：Win 要更“实”（不透明度更高） */
+  --panelL1: rgba(255,255,255,0.965);
+  --panelL2: rgba(248,250,252,0.935);
 
-  --panelD1: rgba(22,26,34,0.92);
-  --panelD2: rgba(16,20,28,0.82);
+  --panelD1: rgba(24,28,38,0.94);
+  --panelD2: rgba(18,22,30,0.90);
 
-  --bdL: rgba(0,0,0,0.10);
-  --bdD: rgba(255,255,255,0.12);
+  /* hairline + 阴影更明确 */
+  --bdL: rgba(0,0,0,0.12);
+  --bdD: rgba(255,255,255,0.13);
 
-  --shL: 0 10px 26px rgba(0,0,0,0.10);
-  --shD: 0 22px 62px rgba(0,0,0,0.62);
+  --shL: 0 12px 30px rgba(0,0,0,0.13);
+  --shD: 0 24px 70px rgba(0,0,0,0.66);
 
-  --inL: inset 0 1px 0 rgba(255,255,255,0.80);
-  --inD: inset 0 1px 0 rgba(255,255,255,0.06);
+  --inL: inset 0 1px 0 rgba(255,255,255,0.85);
+  --inD: inset 0 1px 0 rgba(255,255,255,0.07);
 
   --txL: rgba(18,22,28,0.92);
   --txD: rgba(245,247,250,0.92);
 
-  --selL: rgba(10,132,255,0.18);
-  --selD: rgba(10,132,255,0.28);
-  --selBdL: rgba(10,132,255,0.34);
-  --selBdD: rgba(140,190,255,0.42);
+  --selBdL: rgba(10,132,255,0.38);
+  --selBdD: rgba(140,190,255,0.45);
   --selGlow: 0 0 0 1px rgba(10,132,255,0.18),
-             0 16px 34px rgba(10,132,255,0.12);
+             0 18px 38px rgba(10,132,255,0.14);
 }
 
-/* ========== 背景（直接铺 html，最稳） ========== */
+/* 背景铺到 html（最稳） */
 html, body{
-  margin: 0 !important;
+  margin:0 !important;
   background: transparent !important;
   color: var(--txL) !important;
 }
@@ -59,7 +61,7 @@ html{ background: var(--bgL) !important; }
   body{ color: var(--txD) !important; }
 }
 
-/* 让应用容器透明露底 */
+/* 容器透明露底 */
 section,
 #root,
 .base-container,
@@ -69,16 +71,16 @@ section,
   background: transparent !important;
 }
 
-/* 字体更细腻 */
+/* 字体细腻 */
 *{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  letter-spacing: 0.1px;
+  letter-spacing: .1px;
 }
 
-/* ========== 侧边栏（不依赖 MuiDrawer） ========== */
+/* ================= Sidebar（Win 结构） ================= */
 .layout__left{
-  background: rgba(255,255,255,0.18) !important;
+  background: rgba(255,255,255,0.20) !important;
   border-right: 1px solid rgba(0,0,0,0.10) !important;
 }
 @media (prefers-color-scheme: dark){
@@ -88,7 +90,7 @@ section,
   }
 }
 
-/* 左侧菜单单列 + 贴底 */
+/* 单列菜单 + 贴底 */
 .the-menu{
   display:flex !important;
   flex-direction:column !important;
@@ -101,17 +103,10 @@ section,
 .the-menu li{ width:100% !important; margin:0 !important; padding:0 !important; }
 .the-menu::after{ display:none !important; }
 
-.layout__left{
-  display:flex !important;
-  flex-direction:column !important;
-  height:100% !important;
-}
-.the-traffic{
-  margin-top:auto !important;
-  padding-top:14px !important;
-}
+.layout__left{ display:flex !important; flex-direction:column !important; height:100% !important; }
+.the-traffic{ margin-top:auto !important; padding-top:14px !important; }
 
-/* 左侧选中（更柔和、更高级） */
+/* 左侧选中 */
 .layout__left .Mui-selected,
 .layout__left [aria-selected="true"]{
   border-radius: var(--rs) !important;
@@ -120,150 +115,86 @@ section,
   box-shadow: 0 10px 22px rgba(10,132,255,0.14) !important;
 }
 
-/* ========== 主内容区卡片：多路命中（Win 结构差异兜底） ========== */
-/* A) 如果有 MUI Paper/Accordion：直接命中 */
-.base-container :not(.layout__left) .MuiPaper-root,
-.base-container :not(.layout__left) .MuiAccordion-root{
-  border-radius: var(--r) !important;
-  overflow: hidden !important;
-}
+/* =========================================================
+   核心：只把“紫框那类卡片”（role=button 且不是窄竖条）做成卡片材质
+   - 排除：宽度很窄、只有图标的竖条（你右侧那条彩色竖栏）
+   ========================================================= */
 
-@media (prefers-color-scheme: light){
-  .base-container :not(.layout__left) .MuiPaper-root,
-  .base-container :not(.layout__left) .MuiAccordion-root{
-    background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
-    border: 1px solid var(--bdL) !important;
-    box-shadow: var(--inL), var(--shL) !important;
-  }
-}
-@media (prefers-color-scheme: dark){
-  .base-container :not(.layout__left) .MuiPaper-root,
-  .base-container :not(.layout__left) .MuiAccordion-root{
-    background: linear-gradient(180deg, var(--panelD1), var(--panelD2)) !important;
-    border: 1px solid var(--bdD) !important;
-    box-shadow: var(--inD), var(--shD) !important;
-  }
-}
-
-/* B) 兜底：命中“可交互条目/卡片容器”
-   - 很多节点行/卡片会带 role="button" / tabindex / aria-selected
-   - 我们只在右侧内容区生效，避免污染左侧 */
-.base-container :not(.layout__left) :is(
-  div[role="button"],
-  button,
-  li[role="button"],
-  div[tabindex],
-  button[tabindex]
-){
+/* 1) 定义“卡片候选”：主内容区的 role=button */
+.base-container :not(.layout__left) div[role="button"]{
   border-radius: var(--r) !important;
 }
 
-/* 只给“看起来像卡片的块”上材质：
-   - 有 aria-selected / aria-checked / aria-expanded（节点/折叠/选择项常见）
-   - 或者内部包含两个以上的小标签（Chip）时也会命中 */
-.base-container :not(.layout__left) :is(
-  div[aria-selected],
-  div[aria-checked],
-  div[aria-expanded],
-  button[aria-selected],
-  button[aria-checked],
-  button[aria-expanded]
-){
-  overflow: hidden !important;
+/* 2) 排除窄竖条（通常宽度很小、且高度很长/只有一个图标）
+      这里用：如果里面只有 0~1 个 svg/img 并且文本很少，就不要套卡片材质。
+      （CSS 不能直接算文本长度，所以用结构排除：窄条常见是只有 svg 或 img） */
+.base-container :not(.layout__left) div[role="button"]:has(> svg):not(:has(span, p, h1, h2, h3, h4, h5, h6)),
+.base-container :not(.layout__left) div[role="button"]:has(> img):not(:has(span, p, h1, h2, h3, h4, h5, h6)){
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
 }
+
+/* 3) 真正卡片（包含文字/布局）上材质 */
 @media (prefers-color-scheme: light){
-  .base-container :not(.layout__left) :is(
-    div[aria-selected],
-    div[aria-checked],
-    div[aria-expanded],
-    button[aria-selected],
-    button[aria-checked],
-    button[aria-expanded]
-  ){
+  .base-container :not(.layout__left) div[role="button"]:has(span, p, h1, h2, h3, h4, h5, h6){
     background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
     border: 1px solid var(--bdL) !important;
     box-shadow: var(--inL), var(--shL) !important;
+    overflow: hidden !important;
   }
 }
 @media (prefers-color-scheme: dark){
-  .base-container :not(.layout__left) :is(
-    div[aria-selected],
-    div[aria-checked],
-    div[aria-expanded],
-    button[aria-selected],
-    button[aria-checked],
-    button[aria-expanded]
-  ){
+  .base-container :not(.layout__left) div[role="button"]:has(span, p, h1, h2, h3, h4, h5, h6){
     background: linear-gradient(180deg, var(--panelD1), var(--panelD2)) !important;
     border: 1px solid var(--bdD) !important;
     box-shadow: var(--inD), var(--shD) !important;
+    overflow: hidden !important;
   }
 }
 
-/* hover 微浮起（高级感） */
-.base-container :not(.layout__left) :is(
-  .MuiPaper-root,
-  .MuiAccordion-root,
-  div[aria-selected],
-  div[aria-checked],
-  div[aria-expanded],
-  button[aria-selected],
-  button[aria-checked],
-  button[aria-expanded]
-):hover{
+/* hover 微浮起 */
+.base-container :not(.layout__left) div[role="button"]:has(span, p, h1, h2, h3, h4, h5, h6):hover{
   transform: translateY(-1px);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
-/* ========== 选中态：整块蓝（无竖条） ========== */
-.base-container :not(.layout__left) :is(
-  .Mui-selected,
-  [aria-selected="true"],
-  [aria-checked="true"]
-){
-  box-shadow: var(--selGlow) !important;
-}
+/* ================= 选中态：整块蓝，无竖条 ================= */
 @media (prefers-color-scheme: light){
-  .base-container :not(.layout__left) :is(
-    .Mui-selected,
-    [aria-selected="true"],
-    [aria-checked="true"]
-  ){
+  .base-container :not(.layout__left) div[role="button"].Mui-selected,
+  .base-container :not(.layout__left) div[role="button"][aria-selected="true"],
+  .base-container :not(.layout__left) div[role="button"][aria-checked="true"]{
     background: linear-gradient(180deg, rgba(10,132,255,0.22), rgba(10,132,255,0.14)) !important;
     border: 1px solid var(--selBdL) !important;
+    box-shadow: var(--selGlow) !important;
   }
 }
 @media (prefers-color-scheme: dark){
-  .base-container :not(.layout__left) :is(
-    .Mui-selected,
-    [aria-selected="true"],
-    [aria-checked="true"]
-  ){
+  .base-container :not(.layout__left) div[role="button"].Mui-selected,
+  .base-container :not(.layout__left) div[role="button"][aria-selected="true"],
+  .base-container :not(.layout__left) div[role="button"][aria-checked="true"]{
     background: linear-gradient(180deg, rgba(10,132,255,0.30), rgba(10,132,255,0.18)) !important;
     border: 1px solid var(--selBdD) !important;
+    box-shadow: var(--selGlow) !important;
   }
 }
 
-/* 彻底干掉“竖条闪一下”类指示器伪元素 */
-.base-container :not(.layout__left) :is(
-  .Mui-selected,
-  [aria-selected="true"],
-  [aria-checked="true"],
-  button:active,
-  button:focus-visible
-)::before,
-.base-container :not(.layout__left) :is(
-  .Mui-selected,
-  [aria-selected="true"],
-  [aria-checked="true"],
-  button:active,
-  button:focus-visible
-)::after{
-  content: none !important;
-  display: none !important;
+/* 干掉竖条/闪一下的伪元素 */
+.base-container :not(.layout__left) div[role="button"]::before,
+.base-container :not(.layout__left) div[role="button"]::after{
+  content:none !important;
+  display:none !important;
 }
 
-/* ========== 标签做 iOS 胶囊（如果 Win 上有 MuiChip 就命中） ========== */
+/* 深色 focus/active 也别闪竖条 */
+@media (prefers-color-scheme: dark){
+  .base-container :not(.layout__left) div[role="button"]:focus-visible{
+    outline: none !important;
+    box-shadow: 0 0 0 1px rgba(10,132,255,0.18), var(--selGlow) !important;
+  }
+}
+
+/* ================= Chip 胶囊（如果存在） ================= */
 .MuiChip-root,
 .MuiChip-outlined,
 .MuiChip-sizeSmall{
@@ -273,9 +204,9 @@ section,
 @media (prefers-color-scheme: light){
   .MuiChip-root,
   .MuiChip-outlined{
-    background: rgba(255,255,255,0.78) !important;
+    background: rgba(255,255,255,0.86) !important;
     border: 1px solid rgba(0,0,0,0.16) !important;
-    color: rgba(0,0,0,0.60) !important;
+    color: rgba(0,0,0,0.62) !important;
   }
 }
 @media (prefers-color-scheme: dark){
@@ -283,6 +214,6 @@ section,
   .MuiChip-outlined{
     background: rgba(255,255,255,0.10) !important;
     border: 1px solid rgba(255,255,255,0.16) !important;
-    color: rgba(255,255,255,0.82) !important;
+    color: rgba(255,255,255,0.84) !important;
   }
 }
