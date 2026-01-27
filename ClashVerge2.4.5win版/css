@@ -1,9 +1,6 @@
 /* =========================================================
-   Clash Verge - Windows Premium Glass (WIN v1.2)
-   目标：Win 端也有“苹果高级感”
-   - 不依赖 .css-xxxx hash 类名
-   - blur 有就用；没有 blur 也靠材质/高光/阴影撑住质感
-   - 背景层次更明显，亮色更柔和，暗色更深邃
+   Clash Verge Windows - Premium Matte v1.0 (WIN ONLY)
+   核心：不依赖毛玻璃，靠“渐变 + 内高光 + hairline + 阴影层级”做高级感
    ========================================================= */
 
 /* ---------- Tokens ---------- */
@@ -13,91 +10,61 @@
   --r: 18px;
   --rs: 14px;
 
-  /* 背景（更有层次） */
-  --bg-light:
-    radial-gradient(1100px 780px at 18% 10%, rgba(170, 210, 255, 0.55), transparent 62%),
-    radial-gradient(900px 680px at 82% 16%, rgba(235, 225, 255, 0.40), transparent 66%),
-    radial-gradient(900px 680px at 60% 86%, rgba(190, 240, 235, 0.25), transparent 70%),
-    linear-gradient(180deg, rgba(244, 246, 250, 0.98), rgba(231, 237, 246, 0.96));
+  --bgL:
+    radial-gradient(1200px 900px at 16% 10%, rgba(160, 205, 255, 0.60), transparent 62%),
+    radial-gradient(900px 700px at 82% 16%, rgba(235, 225, 255, 0.44), transparent 66%),
+    linear-gradient(180deg, rgba(246, 248, 252, 0.98), rgba(232, 238, 247, 0.96));
 
-  --bg-dark:
-    radial-gradient(1200px 860px at 20% 12%, rgba(20, 110, 255, 0.24), transparent 66%),
-    radial-gradient(900px 680px at 78% 16%, rgba(150, 120, 255, 0.14), transparent 70%),
-    radial-gradient(900px 680px at 58% 88%, rgba(60, 220, 200, 0.08), transparent 74%),
-    linear-gradient(180deg, rgba(7, 10, 14, 0.995), rgba(10, 16, 24, 0.99));
+  --bgD:
+    radial-gradient(1200px 900px at 20% 12%, rgba(25, 120, 255, 0.28), transparent 66%),
+    radial-gradient(900px 700px at 78% 16%, rgba(150, 120, 255, 0.16), transparent 70%),
+    linear-gradient(180deg, rgba(8, 10, 14, 0.995), rgba(12, 18, 26, 0.99));
 
-  /* 面板（Win 要更“实”一点） */
-  --panel-light: rgba(255,255,255,0.72);
-  --panel-light-strong: rgba(255,255,255,0.82);
-  --panel-dark: rgba(18, 22, 30, 0.78);
-  --panel-dark-strong: rgba(18, 22, 30, 0.86);
+  /* 面板颜色（Win 更稳：更不透明） */
+  --panelL1: rgba(255,255,255,0.92);
+  --panelL2: rgba(248,250,252,0.82);
 
-  /* 边框/阴影（高级感来源） */
-  --stroke-light: rgba(0,0,0,0.10);
-  --stroke-dark: rgba(255,255,255,0.12);
+  --panelD1: rgba(22,26,34,0.92);
+  --panelD2: rgba(16,20,28,0.82);
 
-  --shadow-light: 0 10px 26px rgba(0,0,0,0.10);
-  --shadow-dark:  0 20px 58px rgba(0,0,0,0.60);
+  /* hairline */
+  --bdL: rgba(0,0,0,0.10);
+  --bdD: rgba(255,255,255,0.12);
 
-  /* 内部高光（“玻璃”必备） */
-  --shine-light: inset 0 1px 0 rgba(255,255,255,0.78);
-  --shine-dark:  inset 0 1px 0 rgba(255,255,255,0.06);
+  /* 阴影（更像 mac 的层级） */
+  --shL: 0 10px 26px rgba(0,0,0,0.10);
+  --shD: 0 22px 62px rgba(0,0,0,0.62);
+
+  /* 内高光 */
+  --inL: inset 0 1px 0 rgba(255,255,255,0.80);
+  --inD: inset 0 1px 0 rgba(255,255,255,0.06);
+
+  /* 文本 */
+  --txL: rgba(18,22,28,0.92);
+  --txD: rgba(245,247,250,0.92);
 
   /* 选中态 */
-  --sel-light: rgba(10,132,255,0.18);
-  --sel-dark:  rgba(10,132,255,0.26);
-  --sel-bd-light: rgba(10,132,255,0.34);
-  --sel-bd-dark:  rgba(140,190,255,0.40);
-  --sel-glow: 0 0 0 1px rgba(10,132,255,0.18), 0 16px 34px rgba(10,132,255,0.12);
-
-  /* 字体色 */
-  --text-light: rgba(18,22,28,0.92);
-  --text-dark: rgba(245,247,250,0.92);
+  --selL: rgba(10,132,255,0.18);
+  --selD: rgba(10,132,255,0.28);
+  --selBdL: rgba(10,132,255,0.34);
+  --selBdD: rgba(140,190,255,0.42);
+  --selGlow: 0 0 0 1px rgba(10,132,255,0.18),
+             0 16px 34px rgba(10,132,255,0.12);
 }
 
-/* ---------- Base background (Win 关键：别让容器盖住背景) ---------- */
+/* ---------- Background ---------- */
 html, body{
   margin: 0 !important;
   background: transparent !important;
+  color: var(--txL) !important;
 }
-
-html{
-  background: var(--bg-light) !important;
-  color: var(--text-light) !important;
-}
-
+html{ background: var(--bgL) !important; }
 @media (prefers-color-scheme: dark){
-  html{
-    background: var(--bg-dark) !important;
-    color: var(--text-dark) !important;
-  }
+  html, body{ color: var(--txD) !important; }
+  html{ background: var(--bgD) !important; }
 }
 
-/* 背景细腻度：轻噪点 + 暗角（增强“高级”层次） */
-body::before{
-  content:"";
-  position: fixed;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(1200px 900px at 50% 10%, rgba(255,255,255,0.18), transparent 60%),
-    radial-gradient(1200px 900px at 50% 110%, rgba(0,0,0,0.12), transparent 60%),
-    repeating-linear-gradient(45deg, rgba(255,255,255,0.018) 0 1px, rgba(0,0,0,0.018) 1px 2px);
-  mix-blend-mode: overlay;
-  opacity: 0.65;
-}
-@media (prefers-color-scheme: dark){
-  body::before{
-    opacity: 0.55;
-    background:
-      radial-gradient(1200px 900px at 50% 8%, rgba(255,255,255,0.06), transparent 60%),
-      radial-gradient(1200px 900px at 50% 112%, rgba(0,0,0,0.35), transparent 62%),
-      repeating-linear-gradient(45deg, rgba(255,255,255,0.016) 0 1px, rgba(0,0,0,0.020) 1px 2px);
-  }
-}
-
-/* 让 App 的大容器透明，露出 html 背景 */
+/* 让应用容器透明，露出背景 */
 section,
 #root,
 .base-container,
@@ -107,24 +74,22 @@ section,
   background: transparent !important;
 }
 
-/* 字体更细腻 */
+/* 细腻一点 */
 *{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   letter-spacing: 0.1px;
 }
 
-/* ---------- Sidebar (左侧栏：更像 macOS) ---------- */
+/* ---------- Sidebar ---------- */
 .MuiDrawer-paper{
-  background: rgba(255,255,255,0.14) !important;
-  border-right: 1px solid rgba(0,0,0,0.08) !important;
-  box-shadow: 10px 0 30px rgba(0,0,0,0.10) !important;
+  background: rgba(255,255,255,0.26) !important;
+  border-right: 1px solid rgba(0,0,0,0.10) !important;
 }
 @media (prefers-color-scheme: dark){
   .MuiDrawer-paper{
-    background: rgba(0,0,0,0.18) !important;
+    background: rgba(0,0,0,0.28) !important;
     border-right: 1px solid rgba(255,255,255,0.10) !important;
-    box-shadow: 14px 0 38px rgba(0,0,0,0.38) !important;
   }
 }
 
@@ -151,91 +116,86 @@ section,
   padding-top:14px !important;
 }
 
-/* 左侧选中：更精致 */
-.MuiListItemButton-root.Mui-selected{
+/* 左侧选中：更像 mac 的“柔和蓝块” */
+.MuiListItemButton-root{
   border-radius: var(--rs) !important;
-  background: linear-gradient(180deg, rgba(10,132,255,0.20), rgba(10,132,255,0.14)) !important;
+}
+.MuiListItemButton-root.Mui-selected{
+  background: linear-gradient(180deg, rgba(10,132,255,0.22), rgba(10,132,255,0.14)) !important;
   border: 1px solid rgba(10,132,255,0.26) !important;
   box-shadow: 0 10px 22px rgba(10,132,255,0.14) !important;
 }
 
-/* ---------- Cards / Panels (Paper + Accordion) ---------- */
+/* ---------- Cards / Panels ---------- */
+/* Paper / Card / Accordion 全部统一 */
 .MuiPaper-root,
+.MuiCard-root,
 .MuiAccordion-root{
   border-radius: var(--r) !important;
   overflow: hidden !important;
   background: transparent !important;
 }
 
-/* 默认（无 blur 时也能高级）：靠“面板渐变 + 高光 + 阴影” */
+/* Light panels */
 @media (prefers-color-scheme: light){
   .MuiPaper-root.MuiPaper-rounded,
+  .MuiCard-root,
   .MuiAccordion-root{
-    background:
-      linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64)) !important;
-    border: 1px solid var(--stroke-light) !important;
-    box-shadow: var(--shine-light), var(--shadow-light) !important;
+    background: linear-gradient(180deg, var(--panelL1), var(--panelL2)) !important;
+    border: 1px solid var(--bdL) !important;
+    box-shadow: var(--inL), var(--shL) !important;
   }
 }
+/* Dark panels */
 @media (prefers-color-scheme: dark){
   .MuiPaper-root.MuiPaper-rounded,
+  .MuiCard-root,
   .MuiAccordion-root{
-    background:
-      linear-gradient(180deg, rgba(22,26,36,0.82), rgba(16,20,28,0.74)) !important;
-    border: 1px solid var(--stroke-dark) !important;
-    box-shadow: var(--shine-dark), var(--shadow-dark) !important;
+    background: linear-gradient(180deg, var(--panelD1), var(--panelD2)) !important;
+    border: 1px solid var(--bdD) !important;
+    box-shadow: var(--inD), var(--shD) !important;
   }
 }
 
-/* 有 blur 的机器：再叠加毛玻璃（增强但不依赖） */
-@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))){
-  .MuiPaper-root.MuiPaper-rounded,
-  .MuiAccordion-root{
-    backdrop-filter: blur(16px) saturate(1.08) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(1.08) !important;
-  }
-}
-
-/* Accordion 头部更像“卡片头” */
-.MuiAccordionSummary-root{
-  border-radius: var(--r) !important;
-}
-@media (prefers-color-scheme: light){
-  .MuiAccordionSummary-root{
-    background-color: var(--panel-light-strong) !important;
-    border: 1px solid rgba(0,0,0,0.08) !important;
-  }
-}
-@media (prefers-color-scheme: dark){
-  .MuiAccordionSummary-root{
-    background-color: var(--panel-dark-strong) !important;
-    border: 1px solid rgba(255,255,255,0.10) !important;
-  }
-}
-
-/* hover 微浮起 */
+/* hover 微浮起（高级感） */
 .MuiPaper-root.MuiPaper-rounded:hover,
+.MuiCard-root:hover,
 .MuiAccordion-root:hover{
   transform: translateY(-1px);
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
-/* ---------- Selected state (节点选中：更像 mac 的“整块蓝”) ---------- */
+/* Accordion Summary 头部更像“独立卡片头” */
+.MuiAccordionSummary-root{
+  border-radius: var(--r) !important;
+}
+@media (prefers-color-scheme: light){
+  .MuiAccordionSummary-root{
+    background: rgba(255,255,255,0.72) !important;
+    border: 1px solid rgba(0,0,0,0.10) !important;
+  }
+}
+@media (prefers-color-scheme: dark){
+  .MuiAccordionSummary-root{
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+  }
+}
+
+/* ---------- Node Selected (整块蓝，无竖条) ---------- */
 .MuiPaper-root[aria-selected="true"],
 .MuiPaper-root[aria-checked="true"],
 .MuiButtonBase-root[aria-selected="true"],
 .MuiButtonBase-root[aria-checked="true"]{
-  box-shadow: var(--sel-glow) !important;
+  box-shadow: var(--selGlow) !important;
 }
-
 @media (prefers-color-scheme: light){
   .MuiPaper-root[aria-selected="true"],
   .MuiPaper-root[aria-checked="true"],
   .MuiButtonBase-root[aria-selected="true"],
   .MuiButtonBase-root[aria-checked="true"]{
-    background:
-      linear-gradient(180deg, rgba(10,132,255,0.20), rgba(10,132,255,0.14)) !important;
-    border: 1px solid var(--sel-bd-light) !important;
+    background: linear-gradient(180deg, rgba(10,132,255,0.22), rgba(10,132,255,0.14)) !important;
+    border: 1px solid var(--selBdL) !important;
   }
 }
 @media (prefers-color-scheme: dark){
@@ -243,13 +203,12 @@ section,
   .MuiPaper-root[aria-checked="true"],
   .MuiButtonBase-root[aria-selected="true"],
   .MuiButtonBase-root[aria-checked="true"]{
-    background:
-      linear-gradient(180deg, rgba(10,132,255,0.26), rgba(10,132,255,0.18)) !important;
-    border: 1px solid var(--sel-bd-dark) !important;
+    background: linear-gradient(180deg, rgba(10,132,255,0.28), rgba(10,132,255,0.18)) !important;
+    border: 1px solid var(--selBdD) !important;
   }
 }
 
-/* 干掉任何“左侧竖条指示器” */
+/* 去掉闪竖条（伪元素指示器） */
 .MuiButtonBase-root.Mui-selected::before,
 .MuiButtonBase-root.Mui-selected::after,
 .MuiButtonBase-root[aria-selected="true"]::before,
@@ -265,36 +224,34 @@ section,
 .MuiChip-outlined,
 .MuiChip-sizeSmall{
   border-radius: 999px !important;
-  backdrop-filter: blur(10px) saturate(1.06) !important;
-  -webkit-backdrop-filter: blur(10px) saturate(1.06) !important;
+  font-weight: 600 !important;
 }
-
 @media (prefers-color-scheme: light){
   .MuiChip-root,
   .MuiChip-outlined{
-    background: rgba(255,255,255,0.62) !important;
-    border: 1px solid rgba(0,0,0,0.14) !important;
-    color: rgba(0,0,0,0.62) !important;
+    background: rgba(255,255,255,0.78) !important;
+    border: 1px solid rgba(0,0,0,0.16) !important;
+    color: rgba(0,0,0,0.60) !important;
   }
 }
 @media (prefers-color-scheme: dark){
   .MuiChip-root,
   .MuiChip-outlined{
-    background: rgba(255,255,255,0.09) !important;
+    background: rgba(255,255,255,0.10) !important;
     border: 1px solid rgba(255,255,255,0.16) !important;
-    color: rgba(255,255,255,0.80) !important;
+    color: rgba(255,255,255,0.82) !important;
   }
 }
 
-/* ---------- Top segmented buttons (规则/全局/直连) ---------- */
+/* ---------- 顶部按钮组（规则/全局/直连） ---------- */
 .MuiButtonGroup-root .MuiButton-root{
   border-radius: 10px !important;
   text-transform: none !important;
-  font-weight: 600 !important;
+  font-weight: 700 !important;
 }
 @media (prefers-color-scheme: light){
   .MuiButtonGroup-root .MuiButton-root{
-    background: rgba(255,255,255,0.60) !important;
+    background: rgba(255,255,255,0.72) !important;
     border: 1px solid rgba(0,0,0,0.12) !important;
   }
 }
@@ -316,9 +273,8 @@ section,
     content:none !important;
     display:none !important;
   }
-
   .MuiButtonBase-root:focus-visible{
     outline:none !important;
-    box-shadow: 0 0 0 1px rgba(10,132,255,0.18), var(--sel-glow) !important;
+    box-shadow: 0 0 0 1px rgba(10,132,255,0.18), var(--selGlow) !important;
   }
 }
