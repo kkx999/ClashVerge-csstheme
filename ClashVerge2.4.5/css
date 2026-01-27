@@ -1,0 +1,338 @@
+/* =========================================================
+   Apple-like Premium Glass v2（先浅色后深色）
+   ✅ 修复窗口圆角黑边（html/body 给主题底色）
+   ✅ 浅色更柔和（降亮、降对比）
+   ✅ 深色更高级（更深石墨、hairline、内高光）
+   ✅ 左侧菜单一行一个
+   ✅ 节点选中只有整块蓝色（无左侧竖条）
+   ========================================================= */
+
+/* ============ 0) 变量 ============ */
+:root{
+  --accent: rgba(10, 132, 255, 1);
+
+  --radius: 18px;
+  --radius-sm: 14px;
+  --blur: 14px;
+
+  /* —— 关键：修复“圆角黑边”用到的页面底色 —— */
+  --page-light: #eef2f7;  /* 浅色窗口底色（柔和灰蓝） */
+  --page-dark:  #0b0f16;  /* 深色窗口底色（石墨黑） */
+
+  /* Light 背景（更柔和、不过曝） */
+  --bg-light:
+    radial-gradient(1200px 900px at 18% 10%, rgba(190, 220, 255, 0.55), transparent 60%),
+    radial-gradient(900px 700px at 82% 18%, rgba(235, 230, 255, 0.38), transparent 62%),
+    linear-gradient(180deg, rgba(246, 248, 252, 0.98), rgba(235, 241, 249, 0.96));
+
+  /* Dark 背景（更高级：深石墨 + 微蓝紫光） */
+  --bg-dark:
+    radial-gradient(1200px 900px at 20% 12%, rgba(35, 120, 255, 0.20), transparent 62%),
+    radial-gradient(900px 700px at 78% 18%, rgba(150, 120, 255, 0.10), transparent 66%),
+    radial-gradient(900px 700px at 60% 80%, rgba(60, 220, 200, 0.06), transparent 70%),
+    linear-gradient(180deg, rgba(7, 10, 15, 0.99), rgba(12, 18, 28, 0.98));
+
+  /* 玻璃材质（Light） */
+  --glass-light: rgba(255,255,255,0.18);
+  --glass-light-strong: rgba(255,255,255,0.24);
+  --stroke-light: rgba(0,0,0,0.07);
+  --inner-light: inset 0 1px 0 rgba(255,255,255,0.55);
+
+  /* 玻璃材质（Dark） */
+  --glass-dark: rgba(16, 20, 28, 0.56);
+  --glass-dark-strong: rgba(16, 20, 28, 0.64);
+  --stroke-dark: rgba(255,255,255,0.10);
+  --inner-dark: inset 0 1px 0 rgba(255,255,255,0.06);
+
+  /* 阴影（更克制的 Apple 风） */
+  --shadow-1: 0 10px 24px rgba(0,0,0,0.10);
+  --shadow-2: 0 16px 36px rgba(0,0,0,0.16);
+
+  /* 文本 */
+  --text-light: rgba(18, 22, 28, 0.94);
+  --text-dark: rgba(245, 247, 250, 0.92);
+
+  /* 节点选中（整块蓝） */
+  --sel-light: rgba(10,132,255,0.16);
+  --sel-dark: rgba(10,132,255,0.30);
+  --sel-border-light: rgba(10,132,255,0.28);
+  --sel-border-dark: rgba(120,175,255,0.42);
+  --sel-glow: 0 0 0 1px rgba(10,132,255,0.18), 0 14px 34px rgba(10,132,255,0.12);
+}
+
+/* ============ 1) 修复两角黑边（最重要） ============ */
+/* 以前背景透明 -> 窗口圆角处会露出“底色黑”。现在给 html/body 一个主题底色 */
+html, body{
+  margin: 0 !important;
+  background: var(--page-light) !important;
+}
+@media (prefers-color-scheme: dark){
+  html, body{
+    background: var(--page-dark) !important;
+  }
+}
+
+/* 全局抗锯齿 */
+*{
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  letter-spacing: 0.1px;
+}
+
+/* 滚动条更低存在感 */
+::-webkit-scrollbar{ width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb{
+  background: rgba(140,140,140,0.28);
+  border-radius: 999px;
+  border: 3px solid rgba(0,0,0,0);
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover{ background: rgba(140,140,140,0.42); }
+
+/* ============ 2) 根背景（用你的根容器类名） ============ */
+/* Light 根容器 */
+.css-1li7dvq{
+  background-image: var(--bg-light) !important;
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  color: var(--text-light) !important;
+  position: relative;
+}
+/* Dark 根容器 */
+.css-l3ykv8{
+  background-image: var(--bg-dark) !important;
+  background-color: transparent !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  color: var(--text-dark) !important;
+  position: relative;
+}
+
+/* 可读性微蒙层：浅色更轻、深色稍强一点 */
+.css-1li7dvq::before,
+.css-l3ykv8::before{
+  content:"";
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+.css-1li7dvq::before{
+  background: linear-gradient(180deg, rgba(0,0,0,0.06), rgba(0,0,0,0.04));
+}
+.css-l3ykv8::before{
+  background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.10));
+}
+.css-1li7dvq > *, .css-l3ykv8 > *{ position: relative; }
+
+/* ============ 3) 你原来透明策略（保留，但不再让页面底色透明） ============ */
+section{ background-color: rgba(255,255,255,0) !important; }
+html{ --background-color: #0000 !important; }
+.MuiBox-root{ background-color: transparent !important; }
+.base-container{ background-color: transparent !important; }
+.MuiTypography-root{ background-color: transparent !important; }
+
+/* ============ 4) 左侧菜单：一行一个 ============ */
+.the-menu{
+  display: flex !important;
+  flex-direction: column !important;
+  flex-wrap: nowrap !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  list-style-type: none !important;
+  gap: 12px;
+}
+.the-menu li{
+  width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+}
+.the-menu::after{ display:none !important; }
+
+.layout__left{
+  height: 100% !important;
+  flex: 1 0 400px !important;
+}
+.the-traffic{ margin-top: 30%; }
+
+/* ============ 5) 侧边栏选中：苹果味更干净（去强光晕） ============ */
+.css-a7awl9.Mui-selected,
+.css-1pqmd8p.Mui-selected{
+  background-color: rgba(10,132,255,0.16) !important;
+  border: 1px solid rgba(10,132,255,0.20) !important;
+  border-radius: var(--radius-sm) !important;
+  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+  -webkit-backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+}
+.css-a7awl9 span,
+.css-1pqmd8p span{
+  text-shadow: none !important;
+}
+
+/* ============ 6) 首页按钮/快捷入口：更像 macOS frosted control ============ */
+.css-buo882, .css-1woqkq7,
+.css-6892g4, .css-1j1wdi0{
+  border-radius: var(--radius-sm) !important;
+  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+  -webkit-backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.css-buo882, .css-1woqkq7{
+  background-color: rgba(255,255,255,0.18) !important;
+  border: 1px solid rgba(0,0,0,0.06) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+.css-6892g4, .css-1j1wdi0{
+  background-color: rgba(16,20,28,0.46) !important;
+  border: 1px solid rgba(255,255,255,0.10) !important;
+  box-shadow: var(--shadow-1) !important;
+}
+.css-buo882:hover, .css-1woqkq7:hover,
+.css-6892g4:hover, .css-1j1wdi0:hover{
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2) !important;
+}
+
+/* 首页按钮选中 */
+.css-14aadh2, .css-1dxee5s{
+  background-color: rgba(10,132,255,0.95) !important;
+  color: #fff !important;
+  box-shadow: 0 12px 28px rgba(10,132,255,0.26) !important;
+}
+
+/* ============ 7) 节点/条目卡片：更“高级”的毛玻璃 ============ */
+.css-n8e8d, .css-1d9xrv7, .css-9kkeku,
+.css-jtgpy6, .css-1mxksna,
+.css-14wd3ve, .css-23cvz{
+  border-radius: var(--radius) !important;
+  backdrop-filter: blur(var(--blur)) saturate(1.10) !important;
+  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.10) !important;
+  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+}
+
+/* Light 卡片：更柔和，不刺眼 */
+.css-1li7dvq .css-n8e8d,
+.css-1li7dvq .css-1d9xrv7,
+.css-1li7dvq .css-9kkeku,
+.css-1li7dvq .css-14wd3ve,
+.css-1li7dvq .css-23cvz{
+  background-color: var(--glass-light) !important;
+  border: 1px solid var(--stroke-light) !important;
+  box-shadow: var(--inner-light), var(--shadow-1) !important;
+}
+
+/* Dark 卡片：更高级（内高光 + 更深阴影） */
+.css-l3ykv8 .css-jtgpy6,
+.css-l3ykv8 .css-1mxksna,
+.css-l3ykv8 .css-9kkeku,
+.css-l3ykv8 .css-14wd3ve,
+.css-l3ykv8 .css-23cvz{
+  background-color: var(--glass-dark) !important;
+  border: 1px solid var(--stroke-dark) !important;
+  box-shadow: var(--inner-dark), 0 16px 40px rgba(0,0,0,0.38) !important;
+}
+
+.css-n8e8d:hover, .css-1d9xrv7:hover, .css-9kkeku:hover,
+.css-jtgpy6:hover, .css-1mxksna:hover{
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-2) !important;
+}
+
+/* ============ 8) 节点选中：整块蓝（无左侧竖条） ============ */
+.css-n8e8d.Mui-selected,
+.css-1d9xrv7.Mui-selected,
+.css-9kkeku.Mui-selected,
+.css-jtgpy6.Mui-selected,
+.css-1mxksna.Mui-selected,
+.css-n8e8d[aria-selected="true"],
+.css-1d9xrv7[aria-selected="true"],
+.css-9kkeku[aria-selected="true"],
+.css-jtgpy6[aria-selected="true"],
+.css-1mxksna[aria-selected="true"],
+.css-n8e8d[aria-checked="true"],
+.css-1d9xrv7[aria-checked="true"],
+.css-9kkeku[aria-checked="true"],
+.css-jtgpy6[aria-checked="true"],
+.css-1mxksna[aria-checked="true"]{
+  box-shadow: var(--sel-glow) !important;
+}
+
+/* Light 选中 */
+.css-1li7dvq .css-n8e8d.Mui-selected,
+.css-1li7dvq .css-1d9xrv7.Mui-selected,
+.css-1li7dvq .css-9kkeku.Mui-selected,
+.css-1li7dvq .css-n8e8d[aria-selected="true"],
+.css-1li7dvq .css-1d9xrv7[aria-selected="true"],
+.css-1li7dvq .css-9kkeku[aria-selected="true"],
+.css-1li7dvq .css-n8e8d[aria-checked="true"],
+.css-1li7dvq .css-1d9xrv7[aria-checked="true"],
+.css-1li7dvq .css-9kkeku[aria-checked="true"]{
+  background-color: var(--sel-light) !important;
+  border: 1px solid var(--sel-border-light) !important;
+}
+
+/* Dark 选中 */
+.css-l3ykv8 .css-jtgpy6.Mui-selected,
+.css-l3ykv8 .css-1mxksna.Mui-selected,
+.css-l3ykv8 .css-9kkeku.Mui-selected,
+.css-l3ykv8 .css-jtgpy6[aria-selected="true"],
+.css-l3ykv8 .css-1mxksna[aria-selected="true"],
+.css-l3ykv8 .css-9kkeku[aria-selected="true"],
+.css-l3ykv8 .css-jtgpy6[aria-checked="true"],
+.css-l3ykv8 .css-1mxksna[aria-checked="true"],
+.css-l3ykv8 .css-9kkeku[aria-checked="true"]{
+  background-color: var(--sel-dark) !important;
+  border: 1px solid var(--sel-border-dark) !important;
+}
+
+/* 禁用任何左侧竖条伪元素 */
+.css-n8e8d::before,
+.css-1d9xrv7::before,
+.css-9kkeku::before,
+.css-jtgpy6::before,
+.css-1mxksna::before{
+  content: none !important;
+  display: none !important;
+}
+
+/* ============ 9) 统计图/面板 Paper ============ */
+.MuiPaper-root.MuiPaper-elevation0{ border-radius: var(--radius) !important; }
+
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation0.css-1unmb9x{
+  background-color: var(--glass-light-strong) !important;
+  border: 1px solid var(--stroke-light) !important;
+  box-shadow: var(--inner-light), var(--shadow-1) !important;
+  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+}
+.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation0.css-um6u34{
+  background-color: var(--glass-dark-strong) !important;
+  border: 1px solid var(--stroke-dark) !important;
+  box-shadow: var(--inner-dark), 0 18px 46px rgba(0,0,0,0.40) !important;
+  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+}
+
+/* ============ 10) DataGrid ============ */
+.MuiDataGrid-root{
+  border-radius: var(--radius) !important;
+  overflow: hidden;
+}
+.MuiDataGridVariables-583896634,
+.MuiDataGridVariables-2433827283{
+  --DataGrid-t-color-background-base: #0000 !important;
+  --DataGrid-t-header-background-base: #0000 !important;
+  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.06) !important;
+}
+
+/* ============ 11) 你原本的局部模糊保留 ============ */
+.MuiBox-root.css-79elbk{ backdrop-filter: blur(2px); }
+.MuiBox-root.css-mbssy4,
+.MuiBox-root.css-1ueg5w,
+.MuiBox-root.css-7bkud2{ backdrop-filter: none; }
+
+/* 设置页条目 */
+.css-1i24pk4{ background-color: transparent !important; }
+.css-1ohqk82.MuiButtonBase-root,
+.css-ulr2qx,
+.css-17rlh6j{ background-color: transparent !important; }
