@@ -1,5 +1,8 @@
 /* =========================================================
-   Apple-like Premium Glass
+   Apple-like Premium Glass v2.6 (Cross-platform)
+   - 重点：减少依赖 .css-xxxxx（hash 类名跨平台会变）
+   - 改用 MUI 稳定选择器 + prefers-color-scheme
+   - ✅ 左侧单列 ✅ 流量区贴底 ✅ 选中无竖条 ✅ 深色点击闪竖条修复 ✅ iOS capsule 标签
    ========================================================= */
 
 :root{
@@ -13,7 +16,7 @@
   --page-light: #eef2f7;
   --page-dark:  #0a0e15;
 
-  /* 背景：浅色更柔，深色更沉稳 */
+  /* 背景（直接作用于 body/base-container，避免依赖 hash 容器） */
   --bg-light:
     radial-gradient(1200px 900px at 18% 10%, rgba(185, 218, 255, 0.50), transparent 62%),
     radial-gradient(900px 700px at 82% 18%, rgba(235, 230, 255, 0.34), transparent 66%),
@@ -28,7 +31,6 @@
   /* 玻璃材质 */
   --glass-light: rgba(255,255,255,0.16);
   --glass-light-strong: rgba(255,255,255,0.22);
-
   --glass-dark: rgba(14, 18, 26, 0.54);
   --glass-dark-strong: rgba(14, 18, 26, 0.62);
 
@@ -37,18 +39,18 @@
   --stroke-dark: rgba(255,255,255,0.085);
 
   /* 内高光 */
-  --inner-light: inset 0 1px 0 rgba(255,255,255,0.60);
+  --inner-light: inset 0 1px 0 rgba(255,255,255,0.70);
   --inner-dark:  inset 0 1px 0 rgba(255,255,255,0.055);
 
   /* 阴影 */
-  --shadow-1: 0 10px 22px rgba(0,0,0,0.10);
-  --shadow-2: 0 16px 34px rgba(0,0,0,0.16);
+  --shadow-light: 0 8px 18px rgba(0,0,0,0.08);   /* 更克制 */
+  --shadow-dark:  0 16px 42px rgba(0,0,0,0.42);
 
   /* 文本 */
   --text-light: rgba(18, 22, 28, 0.94);
   --text-dark: rgba(245, 247, 250, 0.92);
 
-  /* 选中态（浅色更明显） */
+  /* 选中态 */
   --sel-light: rgba(10,132,255,0.18);
   --sel-dark:  rgba(10,132,255,0.28);
   --sel-border-light: rgba(10,132,255,0.38);
@@ -57,16 +59,41 @@
               0 12px 26px rgba(10,132,255,0.12);
 }
 
-/* ============ 1) 修复两角黑边 ============ */
+/* ============ 1) 基础修复 & 背景（跨平台） ============ */
 html, body{
   margin: 0 !important;
   background: var(--page-light) !important;
+  color: var(--text-light) !important;
 }
 @media (prefers-color-scheme: dark){
-  html, body{ background: var(--page-dark) !important; }
+  html, body{
+    background: var(--page-dark) !important;
+    color: var(--text-dark) !important;
+  }
 }
 
-/* 字体渲染更细腻 */
+/* 直接把背景铺到 body，避免依赖 .css-xxxxx 容器 */
+body{
+  background-image: var(--bg-light) !important;
+  background-size: cover !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+}
+@media (prefers-color-scheme: dark){
+  body{
+    background-image: var(--bg-dark) !important;
+  }
+}
+
+/* 让应用主容器透明，露出 body 背景 */
+section,
+.base-container,
+.MuiBox-root,
+.MuiTypography-root{
+  background-color: transparent !important;
+}
+
+/* 字体更细腻 */
 *{
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -83,50 +110,7 @@ html, body{
 }
 ::-webkit-scrollbar-thumb:hover{ background: rgba(140,140,140,0.40); }
 
-/* ============ 2) 根背景 ============ */
-section{ background-color: transparent !important; }
-html{ --background-color: #0000 !important; }
-
-.css-1li7dvq{
-  background-image: var(--bg-light) !important;
-  background-color: transparent !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  color: var(--text-light) !important;
-  position: relative;
-}
-.css-l3ykv8{
-  background-image: var(--bg-dark) !important;
-  background-color: transparent !important;
-  background-size: cover !important;
-  background-position: center !important;
-  background-repeat: no-repeat !important;
-  color: var(--text-dark) !important;
-  position: relative;
-}
-
-/* 可读性蒙层 */
-.css-1li7dvq::before,
-.css-l3ykv8::before{
-  content:"";
-  position:absolute; inset:0;
-  pointer-events:none;
-}
-.css-1li7dvq::before{
-  background: linear-gradient(180deg, rgba(0,0,0,0.05), rgba(0,0,0,0.03));
-}
-.css-l3ykv8::before{
-  background: linear-gradient(180deg, rgba(0,0,0,0.16), rgba(0,0,0,0.10));
-}
-.css-1li7dvq > *, .css-l3ykv8 > *{ position: relative; }
-
-/* ============ 3) 全局透明（保留） ============ */
-.MuiBox-root{ background-color: transparent !important; }
-.base-container{ background-color: transparent !important; }
-.MuiTypography-root{ background-color: transparent !important; }
-
-/* ============ 4) 左侧菜单：单列一行一个 + 流量区贴底（A） ============ */
+/* ============ 2) 左侧菜单：单列 + 贴底（稳定类/结构） ============ */
 .the-menu{
   display: flex !important;
   flex-direction: column !important;
@@ -144,225 +128,166 @@ html{ --background-color: #0000 !important; }
 }
 .the-menu::after{ display:none !important; }
 
-/* 左侧容器改为纵向布局，底部流量区自动贴底 */
 .layout__left{
   height: 100% !important;
   flex: 1 0 400px !important;
   display: flex !important;
   flex-direction: column !important;
 }
-
 .the-traffic{
-  margin-top: auto !important;   /* 关键：贴底 */
+  margin-top: auto !important;
   padding-top: 14px !important;
 }
 
-/* 侧边栏选中：干净克制 */
-.css-a7awl9.Mui-selected,
-.css-1pqmd8p.Mui-selected{
+/* 侧边栏选中（用 MUI 稳定类） */
+.MuiListItemButton-root.Mui-selected{
   background-color: rgba(10,132,255,0.15) !important;
   border: 1px solid rgba(10,132,255,0.20) !important;
   border-radius: var(--radius-sm) !important;
   backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
   -webkit-backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
 }
-.css-a7awl9 span,
-.css-1pqmd8p span{
-  text-shadow: none !important;
-}
 
-/* ============ 5) 快捷按钮：薄 frosted 控件 ============ */
-.css-buo882, .css-1woqkq7,
-.css-6892g4, .css-1j1wdi0{
-  border-radius: var(--radius-sm) !important;
-  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
-  -webkit-backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
-  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, border-color .15s ease;
-}
-.css-buo882, .css-1woqkq7{
-  background-color: rgba(255,255,255,0.16) !important;
-  border: 1px solid var(--stroke-light) !important;
-  box-shadow: var(--inner-light), var(--shadow-1) !important;
-}
-.css-6892g4, .css-1j1wdi0{
-  background-color: rgba(14,18,26,0.44) !important;
-  border: 1px solid var(--stroke-dark) !important;
-  box-shadow: var(--inner-dark), var(--shadow-1) !important;
-}
-.css-buo882:hover, .css-1woqkq7:hover,
-.css-6892g4:hover, .css-1j1wdi0:hover{
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-2) !important;
-}
-
-/* 首页按钮选中 */
-.css-14aadh2, .css-1dxee5s{
-  background-color: rgba(10,132,255,0.94) !important;
-  color: #fff !important;
-  box-shadow: 0 12px 26px rgba(10,132,255,0.24) !important;
-}
-
-/* ============ 6) 节点/条目卡片：精修质感 ============ */
-.css-n8e8d, .css-1d9xrv7, .css-9kkeku,
-.css-jtgpy6, .css-1mxksna,
-.css-14wd3ve, .css-23cvz{
+/* ============ 3) 卡片 / 面板：用 MuiPaper 统一玻璃风格（跨平台稳定） ============ */
+/* 常见卡片基本都是 Paper（rounded + elevation0/1），统一圆角 */
+.MuiPaper-root{
   border-radius: var(--radius) !important;
-  backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
-  -webkit-backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
-  transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease, border-color .18s ease;
+  background-color: transparent !important;
 }
 
-/* Light 卡片 */
-.css-1li7dvq .css-n8e8d,
-.css-1li7dvq .css-1d9xrv7,
-.css-1li7dvq .css-9kkeku,
-.css-1li7dvq .css-14wd3ve,
-.css-1li7dvq .css-23cvz{
-  background-color: var(--glass-light) !important;
-  border: 1px solid var(--stroke-light) !important;
-  box-shadow: var(--inner-light), var(--shadow-1) !important;
+/* 浅色 Paper 玻璃 */
+@media (prefers-color-scheme: light){
+  .MuiPaper-root.MuiPaper-rounded{
+    background-color: var(--glass-light) !important;
+    border: 1px solid var(--stroke-light) !important;
+    box-shadow: var(--inner-light), var(--shadow-light) !important;
+    backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
+  }
 }
 
-/* Dark 卡片 */
-.css-l3ykv8 .css-jtgpy6,
-.css-l3ykv8 .css-1mxksna,
-.css-l3ykv8 .css-9kkeku,
-.css-l3ykv8 .css-14wd3ve,
-.css-l3ykv8 .css-23cvz{
-  background-color: var(--glass-dark) !important;
-  border: 1px solid var(--stroke-dark) !important;
-  box-shadow: var(--inner-dark), 0 16px 42px rgba(0,0,0,0.42) !important;
+/* 深色 Paper 玻璃 */
+@media (prefers-color-scheme: dark){
+  .MuiPaper-root.MuiPaper-rounded{
+    background-color: var(--glass-dark) !important;
+    border: 1px solid var(--stroke-dark) !important;
+    box-shadow: var(--inner-dark), var(--shadow-dark) !important;
+    backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(1.08) !important;
+  }
 }
 
-.css-n8e8d:hover, .css-1d9xrv7:hover, .css-9kkeku:hover,
-.css-jtgpy6:hover, .css-1mxksna:hover{
+/* hover 稍微浮起来 */
+.MuiPaper-root.MuiPaper-rounded:hover{
   transform: translateY(-1px);
-  box-shadow: var(--shadow-2) !important;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
 
-/* ============ 7) 节点选中：整块蓝（无竖条） ============ */
-.css-n8e8d.Mui-selected,
-.css-1d9xrv7.Mui-selected,
-.css-9kkeku.Mui-selected,
-.css-jtgpy6.Mui-selected,
-.css-1mxksna.Mui-selected,
-.css-n8e8d[aria-selected="true"],
-.css-1d9xrv7[aria-selected="true"],
-.css-9kkeku[aria-selected="true"],
-.css-jtgpy6[aria-selected="true"],
-.css-1mxksna[aria-selected="true"],
-.css-n8e8d[aria-checked="true"],
-.css-1d9xrv7[aria-checked="true"],
-.css-9kkeku[aria-checked="true"],
-.css-jtgpy6[aria-checked="true"],
-.css-1mxksna[aria-checked="true"]{
+/* ============ 4) 节点选中：整块蓝（不靠 hash） ============ */
+/* 通过 aria-selected/checked 兼容节点列表的选中态 */
+[aria-selected="true"],
+[aria-checked="true"]{
   box-shadow: var(--sel-glow) !important;
 }
 
-/* Light 选中 */
-.css-1li7dvq .css-n8e8d.Mui-selected,
-.css-1li7dvq .css-1d9xrv7.Mui-selected,
-.css-1li7dvq .css-9kkeku.Mui-selected,
-.css-1li7dvq .css-n8e8d[aria-selected="true"],
-.css-1li7dvq .css-1d9xrv7[aria-selected="true"],
-.css-1li7dvq .css-9kkeku[aria-selected="true"],
-.css-1li7dvq .css-n8e8d[aria-checked="true"],
-.css-1li7dvq .css-1d9xrv7[aria-checked="true"],
-.css-1li7dvq .css-9kkeku[aria-checked="true"]{
-  background-color: var(--sel-light) !important;
-  border: 1px solid var(--sel-border-light) !important;
+/* 浅色选中 */
+@media (prefers-color-scheme: light){
+  [aria-selected="true"],
+  [aria-checked="true"]{
+    background-color: var(--sel-light) !important;
+    border: 1px solid var(--sel-border-light) !important;
+  }
 }
 
-/* Dark 选中 */
-.css-l3ykv8 .css-jtgpy6.Mui-selected,
-.css-l3ykv8 .css-1mxksna.Mui-selected,
-.css-l3ykv8 .css-9kkeku.Mui-selected,
-.css-l3ykv8 .css-jtgpy6[aria-selected="true"],
-.css-l3ykv8 .css-1mxksna[aria-selected="true"],
-.css-l3ykv8 .css-9kkeku[aria-selected="true"],
-.css-l3ykv8 .css-jtgpy6[aria-checked="true"],
-.css-l3ykv8 .css-1mxksna[aria-checked="true"],
-.css-l3ykv8 .css-9kkeku[aria-checked="true"]{
-  background-color: var(--sel-dark) !important;
-  border: 1px solid var(--sel-border-dark) !important;
+/* 深色选中 */
+@media (prefers-color-scheme: dark){
+  [aria-selected="true"],
+  [aria-checked="true"]{
+    background-color: var(--sel-dark) !important;
+    border: 1px solid var(--sel-border-dark) !important;
+  }
 }
 
-/* 禁用任何左侧竖条伪元素 */
-.css-n8e8d::before,
-.css-1d9xrv7::before,
-.css-9kkeku::before,
-.css-jtgpy6::before,
-.css-1mxksna::before{
+/* 去掉可能出现的“左侧竖条”（伪元素方式） */
+[aria-selected="true"]::before,
+[aria-selected="true"]::after,
+[aria-checked="true"]::before,
+[aria-checked="true"]::after{
   content: none !important;
   display: none !important;
 }
 
-/* ============ 8) Paper 面板（图表等） ============ */
-.MuiPaper-root.MuiPaper-elevation0{ border-radius: var(--radius) !important; }
-
-.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation0.css-1unmb9x{
-  background-color: var(--glass-light-strong) !important;
-  border: 1px solid var(--stroke-light) !important;
-  box-shadow: var(--inner-light), var(--shadow-1) !important;
-  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
-}
-.MuiPaper-root.MuiPaper-elevation.MuiPaper-rounded.MuiPaper-elevation0.css-um6u34{
-  background-color: var(--glass-dark-strong) !important;
-  border: 1px solid var(--stroke-dark) !important;
-  box-shadow: var(--inner-dark), 0 18px 48px rgba(0,0,0,0.44) !important;
-  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
+/* ============ 5) 标签（Trojan/UDP）→ iOS capsule（跨平台稳定） ============ */
+.MuiChip-root,
+.MuiChip-outlined,
+.MuiChip-sizeSmall{
+  border-radius: 999px !important;
+  backdrop-filter: blur(8px) saturate(1.04) !important;
+  -webkit-backdrop-filter: blur(8px) saturate(1.04) !important;
 }
 
-/* ============ 9) DataGrid（保留） ============ */
-.MuiDataGridVariables-583896634,
-.MuiDataGridVariables-2433827283{
-  --DataGrid-t-color-background-base: #0000 !important;
-  --DataGrid-t-header-background-base: #0000 !important;
-  backdrop-filter: blur(calc(var(--blur) - 4px)) saturate(1.04) !important;
+/* 浅色：更清晰 */
+@media (prefers-color-scheme: light){
+  .MuiChip-root,
+  .MuiChip-outlined{
+    background-color: rgba(255,255,255,0.42) !important;
+    border: 1px solid rgba(0,0,0,0.10) !important;
+    color: rgba(0,0,0,0.62) !important;
+  }
 }
 
-/* ============ 10) 你原本的局部模糊保留 ============ */
-.MuiBox-root.css-79elbk{ backdrop-filter: blur(2px); }
-.MuiBox-root.css-mbssy4,
-.MuiBox-root.css-1ueg5w,
-.MuiBox-root.css-7bkud2{ backdrop-filter: none; }
-
-/* 设置页条目 */
-.css-1i24pk4{ background-color: transparent !important; }
-.css-1ohqk82.MuiButtonBase-root,
-.css-ulr2qx,
-.css-17rlh6j{ background-color: transparent !important; }
-
-/* =========================================================
-   11) Fix: 深色模式点击“延迟测试”等闪一下左侧竖条
-   - 禁用 MUI focus/active 的左侧指示器（伪元素/边框/内阴影）
-   ========================================================= */
-.css-l3ykv8 .MuiButtonBase-root.Mui-selected::before,
-.css-l3ykv8 .MuiButtonBase-root.Mui-selected::after,
-.css-l3ykv8 .MuiButtonBase-root.Mui-focusVisible::before,
-.css-l3ykv8 .MuiButtonBase-root.Mui-focusVisible::after,
-.css-l3ykv8 .MuiButtonBase-root:focus-visible::before,
-.css-l3ykv8 .MuiButtonBase-root:focus-visible::after,
-.css-l3ykv8 .MuiButtonBase-root:active::before,
-.css-l3ykv8 .MuiButtonBase-root:active::after,
-.css-l3ykv8 .MuiListItemButton-root.Mui-selected::before,
-.css-l3ykv8 .MuiListItemButton-root.Mui-selected::after,
-.css-l3ykv8 .MuiListItemButton-root:active::before,
-.css-l3ykv8 .MuiListItemButton-root:active::after{
-  content: none !important;
-  display: none !important;
+/* 深色：更玻璃、更统一 */
+@media (prefers-color-scheme: dark){
+  .MuiChip-root,
+  .MuiChip-outlined{
+    background-color: rgba(255,255,255,0.07) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    color: rgba(255,255,255,0.78) !important;
+  }
 }
 
-.css-l3ykv8 .MuiButtonBase-root.Mui-selected,
-.css-l3ykv8 .MuiButtonBase-root[aria-selected="true"],
-.css-l3ykv8 .MuiButtonBase-root[aria-checked="true"],
-.css-l3ykv8 .MuiListItemButton-root.Mui-selected{
-  border-left: 0 !important;
-  box-shadow: var(--sel-glow) !important;
+/* ============ 6) DataGrid：透明 + 轻毛玻璃（若存在） ============ */
+.MuiDataGrid-root{
+  background: transparent !important;
+}
+.MuiDataGrid-main,
+.MuiDataGrid-columnHeaders{
+  background: transparent !important;
 }
 
-/* 保留一个很淡的苹果式 focus ring（可选） */
-.css-l3ykv8 .MuiButtonBase-root:focus-visible{
-  outline: none !important;
-  box-shadow: 0 0 0 1px rgba(10,132,255,0.18), var(--sel-glow) !important;
+/* ============ 7) 修复：深色模式点击“延迟测试”等闪竖条 ============ */
+@media (prefers-color-scheme: dark){
+  .MuiButtonBase-root.Mui-selected::before,
+  .MuiButtonBase-root.Mui-selected::after,
+  .MuiButtonBase-root.Mui-focusVisible::before,
+  .MuiButtonBase-root.Mui-focusVisible::after,
+  .MuiButtonBase-root:focus-visible::before,
+  .MuiButtonBase-root:focus-visible::after,
+  .MuiButtonBase-root:active::before,
+  .MuiButtonBase-root:active::after,
+  .MuiListItemButton-root.Mui-selected::before,
+  .MuiListItemButton-root.Mui-selected::after,
+  .MuiListItemButton-root:active::before,
+  .MuiListItemButton-root:active::after{
+    content: none !important;
+    display: none !important;
+  }
+
+  .MuiButtonBase-root.Mui-selected,
+  .MuiButtonBase-root[aria-selected="true"],
+  .MuiButtonBase-root[aria-checked="true"],
+  .MuiListItemButton-root.Mui-selected{
+    border-left: 0 !important;
+    box-shadow: var(--sel-glow) !important;
+  }
+
+  /* 很淡的苹果式 focus ring */
+  .MuiButtonBase-root:focus-visible{
+    outline: none !important;
+    box-shadow: 0 0 0 1px rgba(10,132,255,0.18), var(--sel-glow) !important;
+  }
 }
+
+/* ============ 8) 兼容：如果部分 hash 类仍存在（mac 上命中也不冲突） ============ */
+/* 你之前用过的容器类（有就命中，没有也不影响） */
+.css-1li7dvq, .css-l3ykv8{ background-color: transparent !important; }
